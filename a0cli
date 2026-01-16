@@ -1,0 +1,19 @@
+#!/bin/bash
+# Agent Zero CLI - Claude Code-like interface
+# Lightweight prompt with AI news feed, slash commands, rich markdown
+
+DIR="$(cd "$(dirname "$0")" && pwd)"
+cd "$DIR"
+
+# Clean Python cache
+find . -type d -name "__pycache__" -exec rm -rf {} + 2>/dev/null
+find . -name "*.pyc" -delete 2>/dev/null
+
+# Use venv if available
+if [ -x "venv/bin/python" ]; then
+    exec venv/bin/python cli.py "$@"
+elif [ -x "venv/bin/python3" ]; then
+    exec venv/bin/python3 cli.py "$@"
+else
+    exec python3 cli.py "$@"
+fi

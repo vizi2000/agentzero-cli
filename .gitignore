@@ -1,0 +1,36 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtualenv
+venv/
+.venv/
+
+# Build artifacts
+*.egg-info/
+
+# Logs and cache
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Editors / OS
+.idea/
+.vscode/
+.DS_Store
+
+# Local config and secrets
+.env
+.env.*
+config.yaml
+config.local.yaml
+config.local.yml
+
+# App data
+.a0/
+.a0_cli_history
+uploads/
+.snapshots/
+feed.theones.io/api/news.json
