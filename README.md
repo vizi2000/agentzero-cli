@@ -1,8 +1,13 @@
 # Agent Zero CLI (Beta)
 
+[![CI](https://github.com/vizi2000/agentzero-cli/actions/workflows/ci.yml/badge.svg)](https://github.com/vizi2000/agentzero-cli/actions/workflows/ci.yml)
+[![License](https://img.shields.io/github/license/vizi2000/agentzero-cli)](LICENSE)
+[![PyPI](https://img.shields.io/pypi/v/agentzero-cli)](https://pypi.org/project/agentzero-cli/)
+
 A secure local CLI/TUI operator console for Agent Zero. It adds a human-in-the-loop
 approval gate, context builder, and a polished Textual UI so you can safely run agents
-against local workspaces.
+against local workspaces. Ideal for AI agent safety, tool approval workflows, and
+local-first automation.
 
 > **Status:** Beta — features are stable but evolving. Please report issues and feedback.
 
@@ -10,6 +15,10 @@ against local workspaces.
 - Run Agent Zero from your own terminal with explicit tool approvals.
 - Keep your workspace local while providing safe context to the agent.
 - Switch between a full TUI and a lightweight CLI depending on the task.
+
+## Keywords
+Agent Zero CLI, AI agent safety, human-in-the-loop tooling, secure agent execution,
+local-first AI, Textual TUI, Rich CLI, tool approval workflow, context injection.
 
 ## Features
 - **Security modes** — `paranoid`, `balanced`, `god_mode`
