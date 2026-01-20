@@ -33,6 +33,7 @@ from .themes import THEME_PRESETS, resolve_theme_name
 from .widgets.arcade import ArcadeWidget
 from .widgets.hierarchical_menu import HierarchicalMenu
 from .widgets.thinking_indicator import BrandBarIndicator, ThinkingIndicator
+from .insights import get_mixed_feed_item, format_feed_item
 
 _project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if _project_root not in sys.path:
@@ -219,6 +220,19 @@ class AgentZeroCLI(App):
                 classes="status-msg",
             )
         )
+        # Start periodic feed updates (news + project insights)
+        self._feed_timer = self.set_interval(15, self._show_feed_item)
+        # Show initial feed item
+        self.call_later(self._show_feed_item)
+    
+    def _show_feed_item(self) -> None:
+        """Show a mixed feed item (news or project insight) in activity panel."""
+        if self.waiting:
+            # More frequent updates during thinking
+            workspace = self.active_config.get("connection", {}).get("workspace_root")
+            item = get_mixed_feed_item(workspace)
+            formatted = format_feed_item(item)
+            self._append_feed("feed", formatted)
 
     async def on_multiline_input_submitted(self, event: MultilineInput.Submitted) -> None:
         text = event.value
