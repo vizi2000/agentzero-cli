@@ -1,0 +1,32 @@
+# Konfiguracja Agent Zero CLI
+
+connection:
+  host: "localhost"
+  port: 8000
+  api_key: "sekretny-klucz"
+
+security:
+  # Tryby: 'paranoid' (pytaj o wszystko), 'balanced' (auto-read, ask-write), 'god_mode' (rób wszystko)
+  mode: "balanced"
+  
+  # Automatycznie zatwierdzaj te komendy (tylko w trybie balanced)
+  whitelist:
+    - "ls"
+    - "dir"
+    - "cat"
+    - "echo"
+    - "git status"
+    - "pwd"
+    - "whoami"
+
+  # Zawsze blokuj lub wymagaj potwierdzenia (nadpisuje whitelist)
+  blacklist_patterns:
+    - "rm -rf"
+    - "format"
+    - "mkfs"
+    - ":(){ :|:& };:" # Fork bomb
+    - "shutdown"
+
+ui:
+  theme: "hacker_green"
+  show_timestamps: true
