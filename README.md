@@ -6,7 +6,16 @@
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
+## Quick Demo
+
 ![Agent Zero CLI Demo](assets/demo.gif)
+
+## Quick Install
+
+```bash
+pip install agentzero-cli
+a0
+```
 
 ## Why Agent Zero CLI?
 
@@ -14,23 +23,44 @@
 - **Local LLM Support** - Run with Ollama, LM Studio - your data never leaves your machine.
 - **Multi-Backend** - Switch between Local LLM, OpenRouter, or deterministic mode.
 - **Real Tool Execution** - Actually runs shell commands, reads/writes files.
-- **TUI + CLI** - Beautiful terminal UI or simple CLI mode.
 
-## Quick Install
+---
 
-```bash
-pip install agentzero-cli
-```
+## Features in Action
 
-Then run:
-```bash
-a0      # TUI mode (recommended)
-a0cli   # CLI mode
-```
+### Security Interceptor
+
+Dangerous commands like `rm -rf /` and fork bombs are **automatically blocked**:
+
+![Security Demo](assets/demo_security.gif)
+
+### Code Generation
+
+Generate code with syntax highlighting and file save approval:
+
+![Code Generation Demo](assets/demo_codegen.gif)
+
+### Risk Explanation
+
+Press `[E]` to ask AI to explain the risk before approving:
+
+![Risk Explanation Demo](assets/demo_risk.gif)
+
+### Model Switching (LM Studio)
+
+Use any model from your local LM Studio server:
+
+![Model Switch Demo](assets/demo_model_switch.gif)
+
+### Multi-Backend Support
+
+Automatic fallback chain with Local LLM as the safest option:
+
+![Backends Demo](assets/demo_backends.gif)
+
+---
 
 ## Backend Configuration
-
-Agent Zero CLI supports multiple backends with automatic fallback:
 
 | Priority | Backend | Data Location | Setup |
 |----------|---------|---------------|-------|
@@ -39,26 +69,33 @@ Agent Zero CLI supports multiple backends with automatic fallback:
 | 3 | OpenRouter | Cloud | `OPENROUTER_API_KEY=sk-or-...` |
 | 4 | Deterministic | Local | No config needed |
 
-### Recommended: Local LLM (Safest)
+### Local LLM Setup (Recommended)
 
 ```bash
-# With LM Studio (port 1234)
+# LM Studio
 export LOCAL_LLM_URL=http://localhost:1234/v1
+export LOCAL_LLM_MODEL=mistralai/ministral-3-3b  # optional
 
-# With Ollama (port 11434)  
+# Ollama
 export LOCAL_LLM_URL=http://localhost:11434/v1
+export LOCAL_LLM_MODEL=llama3.2:3b
+
+# Remote LM Studio (e.g., on another machine)
+export LOCAL_LLM_URL=http://192.168.1.100:1234/v1
 
 a0
 ```
 
-Your prompts **never leave your machine**.
+Your prompts **never leave your network**.
 
-### Alternative: OpenRouter (Cloud)
+### OpenRouter (Cloud)
 
 ```bash
 export OPENROUTER_API_KEY=sk-or-...
 a0
 ```
+
+---
 
 ## Security Modes
 
@@ -68,16 +105,13 @@ a0
 | `balanced` | Auto-approve | Confirm | BLOCKED |
 | `god_mode` | Auto | Auto | BLOCKED |
 
-Dangerous patterns like `rm -rf /`, fork bombs, etc. are **always blocked**.
+Dangerous patterns are **always blocked**, regardless of mode:
+- `rm -rf /`, `rm -rf ~`
+- Fork bombs `:(){ :|:& };:`
+- `mkfs.*`, `dd if=/dev/`
+- Download and execute (`curl | sh`)
 
-## Features
-
-- **Security Interceptor** - Blocks dangerous commands, requires approval for writes
-- **Risk Analysis** - AI explains command risks before you approve
-- **Multi-Model Load Balancing** - Distribute requests across models
-- **Live Activity Feed** - AI news during agent thinking
-- **Syntax Highlighting** - Beautiful code display
-- **Session History** - Persistent conversation context
+---
 
 ## Keyboard Shortcuts
 
@@ -89,6 +123,8 @@ Dangerous patterns like `rm -rf /`, fork bombs, etc. are **always blocked**.
 | F10 | Quit |
 | Enter | Send |
 | Shift+Enter | New line |
+
+---
 
 ## Development
 
@@ -103,16 +139,21 @@ pip install -e ".[dev]"
 pytest tests/ -v
 ```
 
+---
+
 ## Roadmap
 
 - [x] TUI Interface (Textual)
-- [x] Security interceptor
+- [x] Security interceptor with blocklist
 - [x] Local LLM support (Ollama, LM Studio)
 - [x] OpenRouter integration
 - [x] Real tool execution
+- [x] Risk explanation
 - [x] PyPI package
 - [ ] MCP protocol support
 - [ ] VS Code extension
+
+---
 
 ## License
 
@@ -128,6 +169,6 @@ Developed by **Wojciech Wiesner** | [wojciech@theones.io](mailto:wojciech@theone
 
 **Neurodivergent?** If you thrive on patterns, hyperfocus, and rapid iteration - let's build together.
 
-- [GitHub](https://github.com/vizi2000/agentzero-cli)
-- [AI News Feed](https://feed.theones.io)
-- [TheOnes.io](https://theones.io)
+[![GitHub](https://img.shields.io/badge/GitHub-vizi2000-black?logo=github)](https://github.com/vizi2000/agentzero-cli)
+[![Website](https://img.shields.io/badge/Web-theones.io-blue)](https://theones.io)
+[![News](https://img.shields.io/badge/AI_News-feed.theones.io-orange)](https://feed.theones.io)
