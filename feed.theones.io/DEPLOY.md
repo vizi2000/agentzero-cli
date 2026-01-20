@@ -64,9 +64,11 @@ crontab -l
 
 ```
 /home/vizi/feed.theones.io/
-├── index.html          # Frontend
+├── index.html          # Frontend (feed list)
 ├── api/
 │   └── news.json       # JSON API (auto-generated)
+├── articles/
+│   └── *.html          # Individual article pages (auto-generated)
 ├── collector/
 │   ├── collect.py      # Collection script
 │   └── requirements.txt
