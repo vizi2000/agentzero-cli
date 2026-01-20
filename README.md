@@ -97,7 +97,7 @@ pytest tests/
 - [x] TUI Interface (Textual)
 - [x] Security interceptor
 - [x] Mini-game
-- [ ] OpenRouter integration
+- [x] OpenRouter integration (3 free models, load balancing)
 - [ ] Real tool execution
 - [ ] One-liner installer
 - [ ] MCP support

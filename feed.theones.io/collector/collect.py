@@ -42,7 +42,7 @@ RSS_FEEDS = [
 OUTPUT_DIR = Path("/home/vizi/feed.theones.io/api")
 AGENT_ZERO_URL = os.environ.get(
     "AGENTZERO_API_URL",
-    "http://194.181.240.37:50001/api_message",
+    "http://localhost:50001/api_message",  # Set AGENTZERO_API_URL env var for production
 )
 AGENT_ZERO_KEY = os.environ.get("AGENTZERO_API_KEY")
 

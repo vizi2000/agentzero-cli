@@ -343,8 +343,8 @@ async def execute_approved(approval_id: str) -> dict:
 # config.yaml - TYLKO TO USER MUSI USTAWIĆ
 
 connection:
-  api_url: "http://194.181.240.37:50001/api_message"
-  api_key: "T7kevcXi6oDxfrhK"
+  api_url: "http://your-server:50001/api_message"
+  api_key: "your-api-key-here"
 
 # Reszta = auto-discovery przez /config endpoint
 # MCP endpoint, tools, capabilities - wszystko automatyczne
@@ -352,8 +352,8 @@ connection:
 
 Lub przez env:
 ```bash
-export AGENTZERO_API_URL="http://194.181.240.37:50001/api_message"
-export AGENTZERO_API_KEY="T7kevcXi6oDxfrhK"
+export AGENTZERO_API_URL="http://your-server:50001/api_message"
+export AGENTZERO_API_KEY="your-api-key-here"
 ./a0 --cli
 ```
 
