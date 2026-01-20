@@ -17,7 +17,8 @@ from llm_providers.openrouter import (
     DEFAULT_MODELS,
     create_backend
 )
-from backend import get_backend, MockAgentBackend
+from backend import get_backend
+from llm_providers.local import LocalBackend
 
 
 class TestOpenRouterBackend:
@@ -168,15 +169,6 @@ class TestToolCall:
 class TestBackendFactory:
     """Tests for backend factory function"""
     
-    def test_get_backend_returns_mock_without_key(self):
-        """Test that MockAgentBackend is returned without API key"""
-        # This test verifies the factory logic - when no key, returns mock
-        # We test the MockAgentBackend interface directly instead
-        backend = MockAgentBackend()
-        assert hasattr(backend, 'send_prompt')
-        assert hasattr(backend, 'explain_risk')
-        assert hasattr(backend, 'execute_tool')
-    
     def test_get_backend_returns_openrouter_with_key(self):
         """Test that OpenRouterBackend is returned with API key"""
         with patch.dict(os.environ, {"OPENROUTER_API_KEY": "test-key-123"}):
@@ -184,43 +176,53 @@ class TestBackendFactory:
             assert isinstance(backend, OpenRouterBackend)
 
 
-class TestMockAgentBackend:
-    """Tests for MockAgentBackend"""
+class TestLocalBackend:
+    """Tests for LocalBackend (deterministic, no LLM)"""
     
     @pytest.mark.asyncio
     async def test_send_prompt_yields_events(self):
         """Test that send_prompt yields expected event types"""
-        backend = MockAgentBackend()
+        backend = LocalBackend()
         events = []
         
-        async for event in backend.send_prompt("test"):
+        async for event in backend.send_prompt("list files"):
             events.append(event)
         
-        # Should have status, thoughts, and tool_request
-        event_types = [e.get("type") for e in events]
+        # Should have status and tool_request for known patterns
+        event_types = [e.type for e in events]
         assert "status" in event_types
-        assert "thought" in event_types
         assert "tool_request" in event_types
+    
+    @pytest.mark.asyncio
+    async def test_help_response(self):
+        """Test help request returns info response"""
+        backend = LocalBackend()
+        events = []
+        
+        async for event in backend.send_prompt("help"):
+            events.append(event)
+        
+        event_types = [e.type for e in events]
+        assert "final_response" in event_types
     
     @pytest.mark.asyncio
     async def test_explain_risk(self):
         """Test risk explanation"""
-        backend = MockAgentBackend()
-        result = await backend.explain_risk("ls -la")
+        backend = LocalBackend()
+        result = await backend.explain_risk("rm -rf /")
         
-        assert "[MOCK]" in result
-        assert "Risk Level" in result
+        assert "HIGH RISK" in result
     
     @pytest.mark.asyncio
     async def test_execute_tool(self):
         """Test tool execution"""
-        backend = MockAgentBackend()
+        backend = LocalBackend()
         events = []
         
         async for event in backend.execute_tool("shell", "echo test"):
             events.append(event)
         
-        event_types = [e.get("type") for e in events]
+        event_types = [e.type for e in events]
         assert "status" in event_types
         assert "tool_output" in event_types
 
