@@ -1,102 +1,83 @@
 # Agent Zero CLI
 
-> TUI-based AI coding agent with security interceptor and live activity feed
+> AI coding agent with security interceptor - your prompts, your machine, your control.
 
+[![PyPI version](https://badge.fury.io/py/agentzero-cli.svg)](https://pypi.org/project/agentzero-cli/)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-## Features
+![Agent Zero CLI Demo](assets/demo.gif)
 
-- **AI-Powered Coding Assistant** - Chat interface for code tasks
-- **Security Interceptor** - Blocks dangerous commands (rm -rf, etc.)
-- **Risk Analysis** - AI explains command risks before execution
-- **Multi-Model Support** - OpenRouter integration with load balancing
-- **Live Activity Feed** - AI news + project insights during thinking
-- **Mini-Game** - "Agent ZUSA: Poland Mission" (F3 to play)
+## Why Agent Zero CLI?
 
-## Quick Start
+- **Security First** - Every command goes through approval. Dangerous patterns blocked automatically.
+- **Local LLM Support** - Run with Ollama, LM Studio - your data never leaves your machine.
+- **Multi-Backend** - Switch between Local LLM, OpenRouter, or deterministic mode.
+- **Real Tool Execution** - Actually runs shell commands, reads/writes files.
+- **TUI + CLI** - Beautiful terminal UI or simple CLI mode.
 
-### One-Liner Install
-
-```bash
-curl -sSL https://raw.githubusercontent.com/vizi2000/agentzero-cli/main/scripts/install.sh | bash
-```
-
-This installs to `~/.local/share/agentzero` and creates `a0` command in `~/.local/bin`.
-
-### Manual Installation
+## Quick Install
 
 ```bash
-# Clone repository
-git clone https://github.com/vizi2000/agentzero-cli
-cd agentzero-cli
-
-# Setup environment
-python -m venv venv
-source venv/bin/activate
-pip install -r requirements.txt
+pip install agentzero-cli
 ```
 
-### Configuration
+Then run:
+```bash
+a0      # TUI mode (recommended)
+a0cli   # CLI mode
+```
+
+## Backend Configuration
+
+Agent Zero CLI supports multiple backends with automatic fallback:
+
+| Priority | Backend | Data Location | Setup |
+|----------|---------|---------------|-------|
+| 1 | **Local LLM** | Your machine | `LOCAL_LLM_URL=http://localhost:1234/v1` |
+| 2 | Agent Zero API | Your server | `AGENTZERO_API_URL=http://...` |
+| 3 | OpenRouter | Cloud | `OPENROUTER_API_KEY=sk-or-...` |
+| 4 | Deterministic | Local | No config needed |
+
+### Recommended: Local LLM (Safest)
 
 ```bash
-# Set your OpenRouter API key
-export OPENROUTER_API_KEY="sk-or-..."
+# With LM Studio (port 1234)
+export LOCAL_LLM_URL=http://localhost:1234/v1
 
-# Or create .env file
-echo "OPENROUTER_API_KEY=sk-or-..." > .env
+# With Ollama (port 11434)  
+export LOCAL_LLM_URL=http://localhost:11434/v1
+
+a0
 ```
 
-### Usage
+Your prompts **never leave your machine**.
+
+### Alternative: OpenRouter (Cloud)
 
 ```bash
-# Run TUI
-python main.py
-
-# Or CLI mode
-python cli.py
+export OPENROUTER_API_KEY=sk-or-...
+a0
 ```
-
-## Activity Feed
-
-During agent thinking, the activity panel shows:
-
-- **AI News** - Latest from Anthropic, OpenAI, Google AI, Hugging Face
-- **Project Insights** - Code suggestions, security tips, refactoring hints
-- **Best Practices** - AI/LLM development tips
-
-News powered by [feed.theones.io](https://feed.theones.io)
 
 ## Security Modes
 
-| Mode | Description |
-|------|-------------|
-| `paranoid` | Ask approval for everything |
-| `balanced` | Auto-approve reads, ask for writes |
-| `god_mode` | Auto-approve everything (dangerous!) |
+| Mode | Read-only | Write ops | Dangerous |
+|------|-----------|-----------|-----------|
+| `paranoid` | Confirm | Confirm | BLOCKED |
+| `balanced` | Auto-approve | Confirm | BLOCKED |
+| `god_mode` | Auto | Auto | BLOCKED |
 
-Configure in `config.yaml`:
+Dangerous patterns like `rm -rf /`, fork bombs, etc. are **always blocked**.
 
-```yaml
-security:
-  mode: "balanced"
-  whitelist:
-    - "ls"
-    - "cat"
-    - "git status"
-  blacklist_patterns:
-    - "rm -rf"
-    - "shutdown"
-```
+## Features
 
-## OpenRouter Integration
-
-Load-balanced between free models:
-- `mistralai/devstral-2512:free`
-- `xiaomi/mimo-v2-flash:free`
-- `qwen/qwen3-coder:free`
-
-Falls back to mock mode if no API key is set.
+- **Security Interceptor** - Blocks dangerous commands, requires approval for writes
+- **Risk Analysis** - AI explains command risks before you approve
+- **Multi-Model Load Balancing** - Distribute requests across models
+- **Live Activity Feed** - AI news during agent thinking
+- **Syntax Highlighting** - Beautiful code display
+- **Session History** - Persistent conversation context
 
 ## Keyboard Shortcuts
 
@@ -106,64 +87,47 @@ Falls back to mock mode if no API key is set.
 | F2 | Menu |
 | F3 | Mini-game |
 | F10 | Quit |
-| Enter | Send message |
+| Enter | Send |
 | Shift+Enter | New line |
 
 ## Development
 
 ```bash
+git clone https://github.com/vizi2000/agentzero-cli
+cd agentzero-cli
+python -m venv venv
+source venv/bin/activate
+pip install -e ".[dev]"
+
 # Run tests
 pytest tests/ -v
-
-# Check syntax
-python -m py_compile main.py
-
-# Run with debug
-AGENT_DEBUG=true python main.py
-```
-
-## Project Structure
-
-```
-agentzerocli/
-├── main.py              # TUI entry point
-├── cli.py               # CLI entry point
-├── backend.py           # Backend factory
-├── llm_providers/
-│   └── openrouter.py    # OpenRouter integration
-├── ui/
-│   ├── app.py           # Main TUI application
-│   ├── insights.py      # News + project insights
-│   └── screens/         # Modal screens
-├── cli/
-│   └── news.py          # CLI news display
-├── feed.theones.io/     # News feed infrastructure
-│   └── collector/       # RSS collector + AI rewriter
-└── tests/
-    └── test_openrouter.py
 ```
 
 ## Roadmap
 
 - [x] TUI Interface (Textual)
 - [x] Security interceptor
-- [x] OpenRouter integration (load balancing)
-- [x] Live activity feed (news + insights)
-- [x] Mini-game
-- [x] Real tool execution (shell, read/write files)
-- [x] One-liner installer
-- [ ] MCP support
+- [x] Local LLM support (Ollama, LM Studio)
+- [x] OpenRouter integration
+- [x] Real tool execution
+- [x] PyPI package
+- [ ] MCP protocol support
+- [ ] VS Code extension
 
 ## License
 
-MIT License
+MIT License - see [LICENSE](LICENSE)
 
-## Links
+---
+
+## About
+
+Developed by **Wojciech Wiesner** | [wojciech@theones.io](mailto:wojciech@theones.io)
+
+**[TheOnes](https://theones.io)** - Cutting edge tech powered by Neurodivergent minds
+
+**Neurodivergent?** If you thrive on patterns, hyperfocus, and rapid iteration - let's build together.
 
 - [GitHub](https://github.com/vizi2000/agentzero-cli)
 - [AI News Feed](https://feed.theones.io)
 - [TheOnes.io](https://theones.io)
-
----
-
-Created by **The Collective Borg.tools**
