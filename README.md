@@ -16,7 +16,15 @@
 
 ## Quick Start
 
-### Installation
+### One-Liner Install
+
+```bash
+curl -sSL https://raw.githubusercontent.com/vizi2000/agentzero-cli/main/scripts/install.sh | bash
+```
+
+This installs to `~/.local/share/agentzero` and creates `a0` command in `~/.local/bin`.
+
+### Manual Installation
 
 ```bash
 # Clone repository
@@ -142,9 +150,9 @@ agentzerocli/
 - [x] OpenRouter integration (load balancing)
 - [x] Live activity feed (news + insights)
 - [x] Mini-game
-- [ ] Real tool execution
+- [x] Real tool execution (shell, read/write files)
+- [x] One-liner installer
 - [ ] MCP support
-- [ ] One-liner installer
 
 ## License
 

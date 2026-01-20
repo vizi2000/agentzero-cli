@@ -217,13 +217,12 @@ class TestMockAgentBackend:
         backend = MockAgentBackend()
         events = []
         
-        async for event in backend.execute_tool("echo test"):
+        async for event in backend.execute_tool("shell", "echo test"):
             events.append(event)
         
         event_types = [e.get("type") for e in events]
         assert "status" in event_types
         assert "tool_output" in event_types
-        assert "final_response" in event_types
 
 
 class TestOpenRouterIntegration:

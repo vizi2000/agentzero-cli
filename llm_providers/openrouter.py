@@ -240,20 +240,23 @@ Be concise (max 100 words)."""
         except Exception as e:
             return f"Could not analyze risk: {str(e)}"
     
-    async def execute_tool(self, command: str) -> AsyncGenerator[AgentEvent, None]:
+    async def execute_tool(self, tool_name: str, command: str, cwd: str | None = None) -> AsyncGenerator[AgentEvent, None]:
         """
-        Report tool execution results.
-        Actual execution happens in main.py after security approval.
-        """
-        yield AgentEvent(
-            type="tool_output",
-            content=f"Executed: {command}"
-        )
+        Execute a tool and stream results.
         
-        yield AgentEvent(
-            type="final_response",
-            content="Command executed. What's next?"
-        )
+        Args:
+            tool_name: Type of tool (shell, read_file, etc.)
+            command: Command or arguments
+            cwd: Working directory
+        """
+        # Import here to avoid circular imports
+        from tools.executor import execute_tool as real_execute
+        
+        async for event in real_execute(tool_name, command, cwd):
+            yield AgentEvent(
+                type=event.get("type", "status"),
+                content=event.get("content", "")
+            )
     
     def _parse_tool_call(self, text: str) -> Optional[ToolCall]:
         """Parse tool call from LLM response"""

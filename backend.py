@@ -49,12 +49,12 @@ class MockAgentBackend:
             f"This is a simulated analysis."
         )
 
-    async def execute_tool(self, command: str):
-        """Simulate tool execution."""
-        yield {"type": "status", "content": f"[MOCK] Would execute: {command}"}
-        await asyncio.sleep(0.3)
-        yield {"type": "tool_output", "content": "[MOCK] Simulated output"}
-        yield {"type": "final_response", "content": "[MOCK] Done. Set OPENROUTER_API_KEY for real AI."}
+    async def execute_tool(self, tool_name: str = "shell", command: str = "", cwd: str | None = None):
+        """Execute tool (real execution even in mock mode)."""
+        from tools.executor import execute_tool as real_execute
+        
+        async for event in real_execute(tool_name, command, cwd):
+            yield event
 
 
 def get_backend():

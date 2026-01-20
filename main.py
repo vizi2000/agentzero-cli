@@ -351,7 +351,7 @@ class AgentZeroCLI(App):
                 )
                 if decision == "approved":
                     await chat.mount(Static(f"[OK] APPROVED: {command}", classes="system-msg"))
-                    async for exec_event in self.backend.execute_tool(command):
+                    async for exec_event in self.backend.execute_tool(tool_name, command):
                         if hasattr(exec_event, 'type'):
                             exec_type = exec_event.type
                             exec_content = exec_event.content
@@ -361,8 +361,8 @@ class AgentZeroCLI(App):
                         
                         if exec_type == 'tool_output':
                             await chat.mount(Static(exec_content, classes="tool-output"))
-                        elif exec_type == 'final_response':
-                            await chat.mount(Markdown(f"**AGENT:** {exec_content}", classes="agent-msg"))
+                        elif exec_type == 'status':
+                            await chat.mount(Label(f"[EXEC] {exec_content}", classes="agent-thought"))
                 else:
                     await chat.mount(Static("[REJECTED] Command denied.", classes="system-msg"))
             chat.scroll_end()
