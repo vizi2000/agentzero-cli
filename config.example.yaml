@@ -1,0 +1,116 @@
+# Agent Zero CLI configuration (example)
+
+connection:
+  # API endpoint and auth (prefer env: AGENTZERO_API_URL / AGENTZERO_API_KEY)
+  api_url: "http://host:port/api_message"
+  api_key: "YOUR_KEY"
+  # Optional Agent Zero UI/dashboard URL (F5 opens this)
+  ui_url: "http://host:port/"
+  lifetime_hours: 24
+  # 0 = no timeout (wait indefinitely)
+  timeout_seconds: 0
+  workspace_root: "."
+  use_mock: false
+  send_tool_results: true
+  stream: true
+  stream_mode: "auto"
+  keepalive_seconds: 5
+  max_wait_seconds: 0
+  host: "localhost"
+  port: 8000
+  path: "/api_message"
+
+active_project: "default"
+
+projects:
+  default:
+    workspace_root: "."
+  orchestrator:
+    workspace_root: "/path/to/orchestrator"
+    agent_profile: "default"
+
+agent_profile: "default"
+agent_profiles:
+  default:
+    prompt: "General-purpose agent for software tasks."
+  hacker:
+    prompt: "Security-focused agent. Be cautious, explain risks, and propose safe steps."
+
+context:
+  enabled: true
+  mode: "on_change" # always | on_change | once | manual
+  max_bytes: 20000
+  max_files: 200
+  max_depth: 4
+  include_tree: true
+  include_previews: true
+  preview_files:
+    - "README.md"
+    - "main.py"
+    - "backend.py"
+    - "config.example.yaml"
+  max_preview_bytes: 6000
+  redact_keys:
+    - "api_key"
+    - "token"
+    - "secret"
+    - "password"
+  redact_patterns:
+    - "(?i)bearer\\s+[A-Za-z0-9._-]+"
+  include_git: true
+  include_system: true
+  include_tools: true
+  ignore_dirs:
+    - ".git"
+    - "venv"
+    - "__pycache__"
+    - "node_modules"
+    - ".snapshots"
+    - ".pytest_cache"
+    - ".mypy_cache"
+    - ".ruff_cache"
+    - ".idea"
+    - ".vscode"
+
+security:
+  # Modes: paranoid | balanced | god_mode
+  mode: "balanced"
+  allow_shell: false
+
+  # Auto-approve these commands (balanced mode only)
+  whitelist:
+    - "ls"
+    - "dir"
+    - "cat"
+    - "echo"
+    - "git status"
+    - "pwd"
+    - "whoami"
+
+  # Always block or require confirmation
+  blacklist_patterns:
+    - "rm -rf"
+    - "format"
+    - "mkfs"
+    - ":(){ :|:& };:" # Fork bomb
+    - "shutdown"
+
+ui:
+  # Themes: Studio Light, Studio Dark, High Tech 2026, Atari 800XL,
+  # Commodore C64, ZX Spectrum, Atari ST, Amiga 500, MS DOS XT PC,
+  # Mac One, Mac Classic, Mac Aqua
+  theme: "Studio Light"
+  # waiting_game: invaders | pong | off
+  waiting_game: "invaders"
+  show_timestamps: false
+  status_in_chat: false
+
+observer:
+  enabled: false
+  mode: "automatic" # automatic|manual
+  type: "agent_zero" # agent_zero|local_llm
+  provider: "agent_zero" # agent_zero|openai|openrouter|local
+  model: "gpt-4o-mini"
+  api_key: ""
+  endpoint: ""
+  path: ""

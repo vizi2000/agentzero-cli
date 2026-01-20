@@ -1,0 +1,5 @@
+include README.md LICENSE config.example.yaml
+recursive-include docs *.md
+recursive-include ui *.py *.css
+recursive-include cli *.py
+recursive-include scripts *.sh

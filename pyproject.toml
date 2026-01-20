@@ -1,0 +1,90 @@
+[build-system]
+requires = [
+    "setuptools>=60.0",
+    "wheel",
+]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "agentzero-cli"
+version = "0.1.0"
+description = "Secure CLI/TUI operator panel for Agent Zero with human-in-the-loop safety gate."
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.10"
+authors = [
+    {name = "Wojciech Wiesner", email = "wojciech@theones.io"},
+]
+keywords = [
+    "agent-zero",
+    "cli",
+    "tui",
+    "ai-agent",
+    "llm",
+    "terminal",
+    "human-in-the-loop",
+    "textual",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: User Interfaces",
+    "Topic :: Terminals",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+dependencies = [
+    "textual>=0.40.0",
+    "pyyaml>=6.0",
+    "aiohttp>=3.9.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.1",
+    "pytest-asyncio>=0.21.0",
+    "ruff>=0.1.0",
+    "black>=23.0.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/vizi2000/AgentZeroCLI"
+Repository = "https://github.com/vizi2000/AgentZeroCLI"
+Documentation = "https://github.com/vizi2000/AgentZeroCLI/tree/main/docs"
+Issues = "https://github.com/vizi2000/AgentZeroCLI/issues"
+
+[project.scripts]
+a0tui = "main_new:main"
+a0cli = "cli:main"
+# Legacy aliases
+agentzero = "main_new:main"
+agentzero-tui = "main_new:main"
+agentzero-cli = "cli:main"
+
+[tool.setuptools]
+py-modules = ["backend", "main", "main_new", "cli", "logging_config"]
+
+[tool.setuptools.packages.find]
+where = ["."]
+exclude = ["tests", "docs"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP", "B"]
+
+[tool.black]
+line-length = 100
+target-version = ["py310", "py311", "py312"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]

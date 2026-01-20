@@ -1,0 +1,40 @@
+#!/bin/bash
+# Agent Zero CLI - Terminal UI / CLI for Agent Zero
+# Usage: a0 [--cli] [options]
+# Entry points:
+#   main_new.py (TUI - default)
+#   cli.py (CLI - with --cli flag)
+
+DIR="$(cd "$(dirname "$0")" && pwd)"
+cd "$DIR"
+
+# Clean Python cache
+find . -type d -name "__pycache__" -exec rm -rf {} + 2>/dev/null
+find . -name "*.pyc" -delete 2>/dev/null
+
+# Determine entry point based on --cli flag
+ENTRY_POINT="main_new.py"
+
+for arg in "$@"; do
+    if [ "$arg" = "--cli" ] || [ "$arg" = "-c" ]; then
+        ENTRY_POINT="cli.py"
+        break
+    fi
+done
+
+# Remove --cli from args before passing to Python
+ARGS=()
+for arg in "$@"; do
+    if [ "$arg" != "--cli" ] && [ "$arg" != "-c" ]; then
+        ARGS+=("$arg")
+    fi
+done
+
+# Use venv if available
+if [ -x "venv/bin/python" ]; then
+    exec venv/bin/python "$ENTRY_POINT" "${ARGS[@]}"
+elif [ -x "venv/bin/python3" ]; then
+    exec venv/bin/python3 "$ENTRY_POINT" "${ARGS[@]}"
+else
+    exec python3 "$ENTRY_POINT" "${ARGS[@]}"
+fi
