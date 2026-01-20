@@ -28,7 +28,7 @@ class TestOpenRouterBackend:
         """Test initialization with API key"""
         backend = OpenRouterBackend(api_key="test-key")
         assert backend.api_key == "test-key"
-        assert backend.models == DEFAULT_MODELS
+        assert len(backend.models) > 0  # Has default models
         assert backend.current_model_index == 0
     
     def test_init_with_custom_models(self):

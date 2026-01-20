@@ -1,13 +1,18 @@
 """
 Backend factory for AgentZeroCLI
 
-Priority order:
-1. OpenRouter (if OPENROUTER_API_KEY set) - best quality, cloud LLMs
-2. Agent Zero API (if AGENTZERO_API_URL set) - self-hosted Agent Zero
-3. Local Deterministic (always available) - pattern matching, no LLM
+Priority order (by capability):
+1. OpenRouter - cloud LLMs, best quality, data leaves network
+2. Agent Zero API - self-hosted, good quality, your infrastructure  
+3. Local LLM - Ollama/LM Studio, SAFEST (data stays local), good quality
+4. Local Deterministic - pattern matching, offline, no LLM
 
+SECURITY NOTE:
 All backends go through the same security flow:
   User Input → Backend → tool_request → ToolApprovalScreen → execute
+
+The security interceptor is NEVER bypassed regardless of backend.
+See docs/SECURITY.md for details.
 """
 
 import os
@@ -27,28 +32,29 @@ def get_backend() -> BackendProtocol:
     """
     Factory function to get the best available backend.
     
-    Priority:
-    1. OpenRouter (cloud LLMs) - if OPENROUTER_API_KEY is set
-    2. Agent Zero API (self-hosted) - if AGENTZERO_API_URL is set
-    3. Local Deterministic - always available, pattern matching
+    Priority (checks in order, uses first available):
+    1. Local LLM (SAFEST) - if LOCAL_LLM_URL is set - data stays on your network
+    2. Agent Zero API - if AGENTZERO_API_URL is set - self-hosted
+    3. OpenRouter - if OPENROUTER_API_KEY is set - cloud LLMs, best quality
+    4. Local Deterministic - always available, pattern matching, no LLM
     
     All tool_requests go through ToolApprovalScreen regardless of backend.
     """
     from dotenv import load_dotenv
     load_dotenv()
     
-    # Priority 1: OpenRouter (best quality, multiple models)
-    openrouter_key = os.getenv("OPENROUTER_API_KEY")
-    if openrouter_key:
+    # Priority 1: Local LLM (SAFEST - data never leaves your network)
+    local_llm_url = os.getenv("LOCAL_LLM_URL")
+    if local_llm_url:
         try:
-            from llm_providers.openrouter import OpenRouterBackend
-            backend = OpenRouterBackend(api_key=openrouter_key)
-            print(f"[OK] OpenRouter connected ({len(backend.models)} models)")
+            from llm_providers.localllm import LocalLLMBackend
+            backend = LocalLLMBackend(base_url=local_llm_url)
+            print(f"[OK] Local LLM connected - {backend.model} (SAFEST)")
             return backend
         except ImportError as e:
-            print(f"[WARN] OpenRouter import failed: {e}")
+            print(f"[WARN] LocalLLM import failed: {e}")
         except Exception as e:
-            print(f"[WARN] OpenRouter init failed: {e}")
+            print(f"[WARN] LocalLLM init failed: {e}")
     
     # Priority 2: Agent Zero API (self-hosted)
     agentzero_url = os.getenv("AGENTZERO_API_URL")
@@ -63,12 +69,25 @@ def get_backend() -> BackendProtocol:
         except Exception as e:
             print(f"[WARN] AgentZero init failed: {e}")
     
-    # Priority 3: Local deterministic (always works)
+    # Priority 3: OpenRouter (cloud - data leaves network)
+    openrouter_key = os.getenv("OPENROUTER_API_KEY")
+    if openrouter_key:
+        try:
+            from llm_providers.openrouter import OpenRouterBackend
+            backend = OpenRouterBackend(api_key=openrouter_key)
+            print(f"[OK] OpenRouter connected ({len(backend.models)} models)")
+            return backend
+        except ImportError as e:
+            print(f"[WARN] OpenRouter import failed: {e}")
+        except Exception as e:
+            print(f"[WARN] OpenRouter init failed: {e}")
+    
+    # Priority 4: Local deterministic (no LLM, always works)
     try:
         from llm_providers.local import LocalBackend
         backend = LocalBackend()
         print("[OK] Local mode (pattern matching, no LLM)")
-        print("[INFO] For AI responses, set OPENROUTER_API_KEY or AGENTZERO_API_URL")
+        print("[INFO] For AI responses, set LOCAL_LLM_URL, AGENTZERO_API_URL, or OPENROUTER_API_KEY")
         return backend
     except ImportError:
         pass
