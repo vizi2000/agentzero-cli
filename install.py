@@ -416,21 +416,21 @@ class AgentZeroCLI(App):
         chat = self.query_one("#chat-container")
         async for event in self.backend.send_prompt(user_text):
             if event['type'] == 'thought':
-                await chat.mount(Label(f"💭 {event['content']}", classes="agent-thought"))
+                await chat.mount(Label(f"[THINK] {event['content']}", classes="agent-thought"))
                 chat.scroll_end()
             elif event['type'] == 'tool_request':
                 decision = await self.push_screen_wait(
                     ToolApprovalScreen(event['tool_name'], event['command'], event['reason'], self.backend)
                 )
                 if decision == "approved":
-                    await chat.mount(Static(f"✅ ZATWIERDZONO: {event['command']}", classes="system-msg"))
+                    await chat.mount(Static(f"[OK] APPROVED: {event['command']}", classes="system-msg"))
                     async for exec_event in self.backend.execute_tool(event['command']):
                         if exec_event['type'] == 'tool_output':
                              await chat.mount(Static(exec_event['content'], classes="tool-output"))
                         elif exec_event['type'] == 'final_response':
                              await chat.mount(Markdown(f"**AGENT:** {exec_event['content']}", classes="agent-msg"))
                 else:
-                    await chat.mount(Static("❌ ODRZUCONO.", classes="system-msg"))
+                    await chat.mount(Static("[REJECTED] Command denied.", classes="system-msg"))
             chat.scroll_end()
 
 if __name__ == "__main__":
@@ -452,7 +452,7 @@ Profesjonalny TUI z funkcją "Break Mode" inspirowaną klasykiem Agent USA.
     * Zwalczaj wirusa EvilAGI (kosztuje Tokeny).
     * Mnóż Tokeny (Staking) zostając w bezpiecznych miastach.
 
-## 🚀 Uruchomienie
+## Quick Start
 1.  `python install.py`
 2.  `source venv/bin/activate` (jeśli używasz venv)
 3.  `pip install -r requirements.txt`
@@ -463,16 +463,16 @@ Użyj klawisza **F1**, aby uruchomić grę w dowolnym momencie.
 }
 
 def install():
-    print("🚀 Aktualizuję Agent Zero CLI (Bugfix Update)...")
+    print("Updating Agent Zero CLI (Bugfix Update)...")
     for filename, content in files.items():
         try:
             with open(filename, "w", encoding="utf-8") as f:
                 f.write(content.strip())
-            print(f"✅ Zaktualizowano: {filename}")
+            print(f"[OK] Updated: {filename}")
         except Exception as e:
-            print(f"❌ Błąd: {e}")
+            print(f"[ERROR] {e}")
     
-    print("\n🎉 Gotowe! Uruchom 'python main.py' i wciśnij F1.")
+    print("\nDone! Run 'python main.py' and press F1.")
 
 if __name__ == "__main__":
     install()

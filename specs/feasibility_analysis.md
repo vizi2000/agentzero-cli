@@ -36,7 +36,7 @@
 ```python
 yield {
     "type": "status",
-    "content": f"⏳ Oczekiwanie na odpowiedź... {elapsed}s (połączenie aktywne)"
+    "content": f"[WAIT] Waiting for response... {elapsed}s (connection active)"
 }
 ```
 
